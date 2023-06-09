@@ -1,11 +1,20 @@
 package main
 
-import "fmt"
+import (
+    "flag"
+    "github.com/gin-gonic/gin"
+    "net/http"
+    "os"
+)
 
-func sum(a, b int) int {
-	return a + b
-}
+var version = flag.String("v", "v1", "v1")
 
 func main() {
-	fmt.Println("Sum: ", sum(1, 2))
+    router := gin.Default()
+    router.GET("", func(c *gin.Context) {
+        flag.Parse()
+        hostname, _ := os.Hostname()
+        c.String(http.StatusOK, "This is version:%s running in pod %s", *version, hostname)
+    })
+    router.Run(":8080")
 }
