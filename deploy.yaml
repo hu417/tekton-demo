@@ -1,0 +1,40 @@
+ apiVersion: apps/v1
+ kind: Deployment
+ metadata:
+   name: go-web
+   namespace: default
+ spec:
+   strategy:
+     rollingUpdate:
+       maxSurge: 25%
+       maxUnavailable: 25%
+     type: RollingUpdate
+   selector:
+     matchLabels:
+       app: go-web
+   replicas: 1
+   template:
+     metadata:
+       labels:
+         app: go-web
+     spec:
+       containers:
+         - name: web
+           command: ["./main","-v","v1.3"]
+           image: IMAGE:TAG
+           ports:
+             - containerPort: 8080
+ ---
+ apiVersion: v1
+ kind: Service
+ metadata:
+   name: go-web
+   namespace: default
+ spec:
+   ports:
+     - port: 8080
+       protocol: TCP
+       targetPort: 8080
+   selector:
+     app: go-web
+   type: ClusterIP
