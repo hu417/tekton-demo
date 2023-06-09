@@ -1,9 +1,13 @@
-FROM golang:1.19-alpine3.18
+FROM golang:1.20.5 AS build
+ 
+WORKDIR /go/src/test
+COPY . /go/src/test
+RUN go env -w GOPROXY=https://goproxy.cn,direct
+RUN CGO_ENABLED=0 go build -v -o main .
+ 
+FROM alpine AS api
+RUN mkdir /app
+COPY --from=build /go/src/test/main /app
+WORKDIR /app
+ENTRYPOINT ["./main", "-v" ,"1.0 "]
 
-WORKDIR /go/src/app
-COPY . .
-
-RUN go get -d -v ./...
-RUN go install -v ./...
-
-CMD ["app"]
