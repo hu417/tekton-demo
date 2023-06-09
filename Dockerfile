@@ -9,5 +9,7 @@ FROM alpine AS api
 RUN mkdir /app
 COPY --from=build /go/src/test/main /app
 WORKDIR /app
+EXPOSE 8080
+
 ENTRYPOINT ["./main", "-v" ,"1.0 "]
 
